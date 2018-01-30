@@ -52,3 +52,35 @@ sub register_prereqs {
 __PACKAGE__->meta->make_immutable;
 
 1;
+
+#ABSTRACT: Add arbitrary metadata using a mergefile
+
+=head1 SYNOPSIS
+
+=head3 dist.ini:
+
+ [MetaMergeFile]
+
+=head3 metamerge.yml
+
+ prereqs:
+   runtime:
+     recommends:
+       Foo: 0.023
+     suggests:
+       Bar: 0
+ resources
+   homepage: http://www.example.com/MyModule/
+   x_twitter: http://twitter.com/cpan_linked/
+
+=head1 DESCRIPTION
+
+This plugin implements metamerge files. These allow you to easily add arbitrary information to your metafiles.
+
+=head2 Why metamerge files?
+
+Metamerge files are somewhat similar to cpanfiles, but with a few important differences. Firstly, they're not limited to prereqs but allow any valid type of metadata. Secondly, they don't involve evaluating code to produce data, data should be data.
+
+=head2 Names and formats
+
+This file reads either a JSON formatted F<metamerge.json>, or a YAML formatted F<metamerge.yml> (or another file if passed with the C<filename> parameter). Regardless of the format, it will parse them as L<META 2.0|CPAN::Meta::Spec> unless their C<meta-spec> field claims otherwise.
