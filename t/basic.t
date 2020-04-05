@@ -17,7 +17,7 @@ my %wanted = (
 );
 
 my $tzil = Builder->from_config(
-	{ dist_root => 'corpus' },
+	{ dist_root => 'corpus/1' },
 	{ },
 );
 $tzil->build;
