@@ -1,4 +1,4 @@
-package Dist::Zilla::Plugin::PrereqFile;
+package Dist::Zilla::Plugin::PrereqsFile;
 
 use Moose;
 use namespace::autoclean;
