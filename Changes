@@ -1,6 +1,8 @@
 Revision history for Dist-Zilla-Plugin-MetaMergeFile
 
 {{$NEXT}}
+
+0.002     2020-04-05 22:21:35+02:00 Europe/Amsterdam
           - Add Dist::Zilla::Plugin::PrereqsFile
 
 0.001     2018-01-30 19:39:05+01:00 Europe/Amsterdam
