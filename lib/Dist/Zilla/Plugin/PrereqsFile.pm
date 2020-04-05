@@ -14,13 +14,13 @@ has filenames => (
 	is        => 'ro',
 	isa       => ArrayRef[Stringlike],
 	default   => sub {
-		return (grep { -f } @defaults);
+		return [ grep { -f } @defaults ];
 	},
 );
 
 sub register_prereqs {
 	my $self = shift;
-	for my $filename ($self->filenames) {
+	for my $filename (@{ $self->filenames }) {
 		require Parse::CPAN::Meta;
 		my $prereqs = Parse::CPAN::Meta->load_file($filename);
 		for my $phase (keys %{ $prereqs }) {
