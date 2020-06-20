@@ -44,7 +44,7 @@ __PACKAGE__->meta->make_immutable;
 
 1;
 
-#ABSTRACT: Add arbitrary metadata using a mergefile
+#ABSTRACT: Add static prereqs using a prereqs file
 
 =head1 SYNOPSIS
 
@@ -62,11 +62,11 @@ __PACKAGE__->meta->make_immutable;
 
 =head1 DESCRIPTION
 
-This plugin implements prereq files. These allow you to easily add arbitrary prerequisites to your metafiles.
+This plugin implements prereqs files. These allow you to easily add static prerequisites to your metadata.
 
-=head2 Why metamerge files?
+=head2 Why prereqs files?
 
-Prereq files are somewhat similar to cpanfiles, but with an important difference. They don't involve evaluating code to produce data, data should be data.
+Prereqs files are somewhat similar to cpanfiles, but with an important difference. They don't involve evaluating code to produce data, data should be data.
 
 =head2 Names and formats
 
