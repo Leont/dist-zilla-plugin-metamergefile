@@ -1,6 +1,9 @@
 package Dist::Zilla::Plugin::MetaMergeFile;
 
+use 5.020;
 use Moose;
+use experimental qw/signatures/;
+
 use MooseX::Types::Moose qw/ArrayRef Str/;
 use namespace::autoclean;
 
@@ -35,8 +38,7 @@ has _rawdata => (
 	builder  => '_build_rawdata',
 );
 
-sub _build_rawdata {
-	my $self = shift;
+sub _build_rawdata($self) {
 	my @parsed = map { Parse::CPAN::Meta->load_file($_) } $self->filenames;
 	if (@parsed > 1) {
 		my $merger = CPAN::Meta::Merge->new(default_version => 2);
@@ -49,15 +51,13 @@ sub _build_rawdata {
 	}
 }
 
-sub metadata {
-	my $self = shift;
+sub metadata($self) {
 	my %data = %{ $self->_rawdata };
 	delete $data{prereqs};
 	return \%data;
 }
 
-sub register_prereqs {
-	my $self = shift;
+sub register_prereqs($self) {
 	my $prereqs = $self->_rawdata->{prereqs};
 	for my $phase (keys %{ $prereqs }) {
 		for my $type (keys %{ $prereqs->{$phase} }) {

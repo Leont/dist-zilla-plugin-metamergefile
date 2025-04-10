@@ -1,6 +1,8 @@
 package Dist::Zilla::Plugin::PrereqsFile;
 
+use 5.020;
 use Moose;
+use experimental qw/signatures/;
 use namespace::autoclean;
 
 with qw/Dist::Zilla::Role::PrereqSource/;
@@ -18,8 +20,7 @@ has filenames => (
 	},
 );
 
-sub register_prereqs {
-	my $self = shift;
+sub register_prereqs($self) {
 	for my $filename (@{ $self->filenames }) {
 		require Parse::CPAN::Meta;
 		my $prereqs = Parse::CPAN::Meta->load_file($filename);
@@ -34,7 +35,7 @@ sub register_prereqs {
 	}
 }
 
-sub mvp_aliases {
+sub mvp_aliases($self) {
 	return {
 		filename => 'filenames',
 	};
