@@ -1,20 +1,31 @@
 package Dist::Zilla::Plugin::MetaMergeFile;
 
 use Moose;
+use MooseX::Types::Moose qw/ArrayRef Str/;
 use namespace::autoclean;
 
 with qw/Dist::Zilla::Role::MetaProvider Dist::Zilla::Role::PrereqSource/;
 
-use MooseX::Types::Stringlike 'Stringlike';
+use CPAN::Meta::Converter;
+use CPAN::Meta::Merge;
 use Parse::CPAN::Meta;
 
-my @defaults = qw/metamerge.json metamerge.yml/;
+sub mvp_multivalue_args {
+	return 'filenames';
+}
 
-has filename => (
-	is       => 'ro',
-	isa      => Stringlike,
+sub mvp_aliases {
+	return { filename => 'filenames' };
+}
+
+has filenames => (
+	isa      => ArrayRef[Str],
+	traits   => [ 'Array' ],
+	handles  => {
+		filenames => 'elements',
+	},
 	default  => sub {
-		return (grep { -f } @defaults)[0];
+		return [ grep { -f } qw/metamerge.json metamerge.yml/ ];
 	},
 );
 
@@ -26,7 +37,16 @@ has _rawdata => (
 
 sub _build_rawdata {
 	my $self = shift;
-	return Parse::CPAN::Meta->load_file($self->filename);
+	my @parsed = map { Parse::CPAN::Meta->load_file($_) } $self->filenames;
+	if (@parsed > 1) {
+		my $merger = CPAN::Meta::Merge->new(default_version => 2);
+		return $merger->merge(@parsed);
+	} elsif (@parsed) {
+		my $converter = CPAN::Meta::Converter->new($parsed[0], default_version => 2);
+		return $converter->upgrade_fragment;
+	} else {
+		return {};
+	}
 }
 
 sub metadata {
@@ -83,4 +103,4 @@ Metamerge files are somewhat similar to cpanfiles, but with a few important diff
 
 =head2 Names and formats
 
-This file reads either a JSON formatted F<metamerge.json>, or a YAML formatted F<metamerge.yml> (or another file if passed with the C<filename> parameter). Regardless of the format, it will parse them as L<META 2.0|CPAN::Meta::Spec> unless their C<meta-spec> field claims otherwise.
+This file reads a JSON formatted F<metamerge.json>, and/or a YAML formatted F<metamerge.yml>. Alternatively, if passed with the C<filename> parameter it will read other files. Regardless of the format, it will parse them as L<META 2.0|CPAN::Meta::Spec> unless their C<meta-spec> field claims otherwise.
