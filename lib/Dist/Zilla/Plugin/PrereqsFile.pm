@@ -57,7 +57,7 @@ __PACKAGE__->meta->make_immutable;
 
  runtime:
    recommends:
-     Foo: 0.023
+     Foo: '0.023'
    suggests:
      Bar: 0
 
