@@ -2,7 +2,7 @@ package Dist::Zilla::Plugin::MetaMergeFile;
 
 use 5.020;
 use Moose;
-use experimental qw/signatures/;
+use experimental qw/signatures postderef/;
 
 use MooseX::Types::Moose qw/ArrayRef Str/;
 use namespace::autoclean;
@@ -52,18 +52,18 @@ sub _build_rawdata($self) {
 }
 
 sub metadata($self) {
-	my %data = %{ $self->_rawdata };
+	my %data = $self->_rawdata->%*;
 	delete $data{prereqs};
 	return \%data;
 }
 
 sub register_prereqs($self) {
 	my $prereqs = $self->_rawdata->{prereqs};
-	for my $phase (keys %{ $prereqs }) {
-		for my $type (keys %{ $prereqs->{$phase} }) {
+	for my $phase (keys $prereqs->%*) {
+		for my $type (keys $prereqs->{$phase}->%*) {
 			$self->zilla->register_prereqs(
 				{ phase => $phase, type => $type },
-				%{ $prereqs->{$phase}{$type} }
+				$prereqs->{$phase}{$type}->%*
 			);
 		}
 	}

@@ -2,7 +2,7 @@ package Dist::Zilla::Plugin::PrereqsFile;
 
 use 5.020;
 use Moose;
-use experimental qw/signatures/;
+use experimental qw/signatures postderef/;
 use namespace::autoclean;
 
 with qw/Dist::Zilla::Role::PrereqSource/;
@@ -21,14 +21,14 @@ has filenames => (
 );
 
 sub register_prereqs($self) {
-	for my $filename (@{ $self->filenames }) {
+	for my $filename ($self->filenames->@*) {
 		require Parse::CPAN::Meta;
 		my $prereqs = Parse::CPAN::Meta->load_file($filename);
-		for my $phase (keys %{ $prereqs }) {
-			for my $type (keys %{ $prereqs->{$phase} }) {
+		for my $phase (keys $prereqs->%*) {
+			for my $type (keys $prereqs->{$phase}->%*) {
 				$self->zilla->register_prereqs(
 					{ phase => $phase, type => $type },
-					%{ $prereqs->{$phase}{$type} }
+					$prereqs->{$phase}{$type}->%*
 				);
 			}
 		}
